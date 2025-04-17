@@ -10,7 +10,10 @@ namespace RtanIsland
         static void Main(string[] args)
         {
             // 인트로
-            Console.WriteLine("텍스트 RPG (스파르타 던전) 개인과제 20250418 제출예정");
+            Console.WriteLine("▶ 르탄 아일랜드 ◀");
+            Console.WriteLine("르탄 아일랜드의 바닷가에서" +
+                "\n알 수 없는 괴생명체들이 출몰하고 있어요!" +
+                "\n우리 르탄 아일랜드를 지켜주세요! \n\n[Enter]");
             Console.ReadLine();
 
             // 게임입장
@@ -47,7 +50,11 @@ namespace RtanIsland
 
                 // 플레이어 생성
                 Console.Clear();
-                Console.WriteLine($"스파르타 마을에 오신 {job} {name}님, 환영합니다.\r\n던전으로 들어가기전 활동을 할 수 있습니다.");
+                Console.WriteLine($"{name}님은 {job}이 되었습니다." +
+                    "르탄 아일랜드에 입장합니다!" +
+                    "\n\n[Enter] 입장하기");
+                Console.ReadLine();
+
                 Menu();
             }
 
@@ -76,7 +83,7 @@ namespace RtanIsland
                 while (true)
                 {
                     Console.Clear();
-                    Console.Write("직업을 선택하세요.\n1. 전사 \n2. 법사 \n3. 궁수\n>>");
+                    Console.Write("직업을 선택하세요.\n1. 잠수꾼 \n2. 뱃사공 \n3. 사냥꾼\n>>");
                     string input = Console.ReadLine();
                     int.TryParse(input, out _job);
 
@@ -84,10 +91,6 @@ namespace RtanIsland
                     {
                         break;
                     }
-                    //else if (string.IsNullOrWhiteSpace(input) || string.IsNullOrEmpty(input))
-                    //{
-                    //    continue;
-                    //}
                     else
                     {
                         continue;
@@ -100,10 +103,12 @@ namespace RtanIsland
             public void Menu()
             {
                 Console.Clear();
-                Console.WriteLine("■ 메인메뉴");
+                Console.WriteLine("■ 르탄 아일랜드 _ 메인 육지 ■");
                 Console.WriteLine("1. 상태보기");
                 Console.WriteLine("2. 인벤토리");
                 Console.WriteLine("3. 상점");
+                //Console.WriteLine("4. 바다 던전 입장하기");
+                Console.WriteLine("5. 휴식하기"); // 500G 내면 체력 100 회복
 
                 Console.Write("\n0. 나가기\n\n>>");
 
@@ -122,6 +127,12 @@ namespace RtanIsland
                     case "3":
                         _shop.ShopUI(_player, _inventory);
                         break;
+                    //case "4":
+                    //    Ocean ocean = new Ocean();
+                    case "5":
+                        Rest rest = new Rest();
+                        rest.RestUI(_player);
+                        break;
                     case "0":
                         Environment.Exit(0);
                         break;
@@ -129,58 +140,118 @@ namespace RtanIsland
                         break;
                 }
             }
+        }
 
-            // A.직업 enum
-            public enum Job
+
+        // A.직업 enum
+        public enum Job
+        {
+            잠수꾼 = 1,
+            뱃사공,
+            사냥꾼
+        }
+
+
+        // B-1. 상태보기
+        class Player
+        {
+            // 생성자
+            private Inventory _inv;
+            private Shop _shop;
+
+            public string Name { get; set; }
+            public int Level { get; set; }
+            public Job Job { get; set; }
+            public int Attack { get; set; }
+            public int Defense { get; set; }
+            public int Health { get; set; }
+            public int Gold { get; set; }
+            public Player(string name, int level, Job job, int attack, int defense, int health, int gold)
             {
-                전사 = 1,
-                법사,
-                궁수
+                Name = name;
+                Level = level;
+                Job = job;
+                Attack = attack;
+                Defense = defense;
+                Health = health;
+                Gold = gold;
             }
 
-
-            // B-1. 상태보기
-            class Player
+            //상태보기 출력
+            public void StateUI()
             {
-                // 생성자
-                private Inventory _inv;
-                private Shop _shop;
-
-                public string Name { get; set; }
-                public int Level { get; set; }
-                public Job Job { get; set; }
-                public int Attack { get; set; }
-                public int Defense { get; set; }
-                public int Health { get; set; }
-                public int Gold { get; set; }
-                public Player(string name, int level, Job job, int attack, int defense, int health, int gold)
+                while (true)
                 {
-                    Name = name;
-                    Level = level;
-                    Job = job;
-                    Attack = attack;
-                    Defense = defense;
-                    Health = health;
-                    Gold = gold;
-                }
+                    Console.Clear();
+                    Console.WriteLine($"<상태보기>\n{Name}님의 캐릭터 정보가 표시됩니다." +
+                    $"\nLv. {Level}" +
+                    $"\n직업: {Job}" +
+                    $"\n공격력: {Attack}" +
+                    $"\n방어력: {Defense}" +
+                    $"\n체력: {Health}/100" +
+                    $"\nGold: {Gold}G");
 
-                //상태보기 출력
-                public void StateUI()
-                {
-                    while (true)
+                    Console.Write("\n0. 나가기\n\n>>");
+
+                    if (Console.ReadLine() == "0")
                     {
-                        Console.Clear();
-                        Console.WriteLine($"<상태보기>\n{Name}님의 캐릭터 정보가 표시됩니다." +
-                        $"\nLv. {Level}" +
-                        $"\n직업: {Job}" +
-                        $"\n공격력: {Attack}" +
-                        $"\n방어력: {Defense}" +
-                        $"\n체력: {Health}/100" +
-                        $"\nGold: {Gold}G");
+                        return;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+            }
+        }
 
-                        Console.Write("\n0. 나가기\n\n>>");
 
+        // B-2. 인벤토리
+        class Inventory
+        {
+            private List<Item> _items = new List<Item>();
+
+            public void Add(Item item) => _items.Add(item);
+
+            // 인벤토리 출력
+            public void invUI(Player player)
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("<인벤토리>");
+                    Console.WriteLine($"[보유 골드]{player.Gold}G\n");
+
+                    if (_items.Count == 0)
+                    {
+                        Console.WriteLine("인벤토리에 아이템이 없습니다.");
+                        Console.WriteLine("0. 나가기\n>>");
                         if (Console.ReadLine() == "0")
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("[아이템 목록]");
+                        for (int i = 0; i < _items.Count; i++)
+                        {
+                            var item = _items[i];
+                            string equippedTag = item.IsEquipped ? "[E] " : "";
+                            Console.WriteLine($"{i + 1}. {equippedTag}{item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
+                        }
+
+                        Console.Write("\n1. 장착 관리\n0. 나가기\n>>");
+                        var cmd = Console.ReadLine();
+                        if (cmd == "1")
+                        {
+                            EquipUI(player);
+                        }
+                        else if (cmd == "0")
                         {
                             return;
                         }
@@ -192,218 +263,224 @@ namespace RtanIsland
                 }
             }
 
-
-            // M-2. 인벤토리
-            class Inventory
+            // 장착 관리
+            public void EquipUI(Player player)
             {
-                private List<Item> _items = new List<Item>();
-
-                public void Add(Item item) => _items.Add(item);
-
-                // 인벤토리 출력
-                public void invUI(Player player)
+                while (true)
                 {
-                    while (true)
+                    Console.Clear();
+                    Console.WriteLine("<장착 관리>");
+                    for (int i = 0; i < _items.Count; i++)
                     {
-                        Console.Clear();
-                        Console.WriteLine("<인벤토리>");
-                        Console.WriteLine($"[보유 골드]{player.Gold}G\n");
+                        var item = _items[i];
+                        string equippedTag = item.IsEquipped ? "[E] " : "";
+                        Console.WriteLine($"{i + 1}. {equippedTag}{item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
+                    }
+                    Console.Write("\n0. 나가기\n>>");
 
-                        if (_items.Count == 0)
+                    var line = Console.ReadLine();
+                    if (line == "0")
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        int index;
+                        if (int.TryParse(line, out index) && index > 0 && index <= _items.Count)
                         {
-                            Console.WriteLine("인벤토리에 아이템이 없습니다.");
-                            Console.WriteLine("0. 나가기\n>>");
-                            if (Console.ReadLine() == "0")
-                            {
-                                return;
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                            var item = _items[index - 1];
+                            item.IsEquipped = !item.IsEquipped; // 장착 상태 토글
+                            Console.WriteLine($"{item.ItemName}이(가) {(item.IsEquipped ? "장착되었습니다." : "해제되었습니다.")}");
+                            Console.ReadLine();
                         }
                         else
                         {
-                            Console.WriteLine("[아이템 목록]");
-                            for (int i = 0; i < _items.Count; i++)
-                            {
-                                var item = _items[i];
-                                string equippedTag = item.IsEquipped ? "[E] " : "";
-                                Console.WriteLine($"{i + 1}. {equippedTag}{item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
-                            }
-
-                            Console.Write("\n1. 장착 관리\n0. 나가기\n>>");
-                            var cmd = Console.ReadLine();
-                            if (cmd == "1")
-                            {
-                                EquipUI(player);
-                            }
-                            else if (cmd == "0")
-                            {
-                                return;
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                            continue;
                         }
                     }
                 }
+            }
+        }
 
-                // 장착 관리
-                public void EquipUI(Player player)
-                {
-                    while (true)
+
+        // B-3. 상점
+        class Shop
+        {
+            // 상점 생성자
+            private Player _player;
+            private Inventory _inv;
+            private List<Item> _tem;
+
+            
+
+            public Shop(Player player, Inventory inv)
+            {
+                _player = player;
+                _inv = inv;
+                _tem = new List<Item>()
                     {
-                        Console.Clear();
-                        Console.WriteLine("<장착 관리>");
-                        for (int i = 0; i < _items.Count; i++)
-                        {
-                            var item = _items[i];
-                            string equippedTag = item.IsEquipped ? "[E] " : "";
-                            Console.WriteLine($"{i + 1}. {equippedTag}{item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
-                        }
-                        Console.Write("\n0. 나가기\n>>");
+                        //아이템 정보: 이름, 설명, 공격력, 방어력, 체력**, 가격
+                        //아이템 정보를 배열로 관리하기 .... 수정 Not yet
+                        new Item(ItemList.산소통, "물 속에서 산소가 부족할 때 필요", 0, 0, 5, 50),
+                        new Item(ItemList.물안경, "물 속에서 시야가 흐려지지 않게 도움", 0, 5, 0, 100),
+                        new Item(ItemList.잠수복, "해녀들에게 인기 많던 바로 그 옷", 0, 10, 0, 250),
+                        new Item(ItemList.래쉬가드, "빠른 건조에 탁월한 가벼운 기능성 수영복", 0, 7, 0, 200),
+                        new Item(ItemList.나무작살, "나무라 오래쓰진 못하겠다", 5, 0, 0, 100),
+                        new Item(ItemList.무쇠작살, "아주 그냥 작살나죠", 10, 0, 0, 300),
+                        new Item(ItemList.낚시세트, "바다 사냥의 근본! 올인원 낚시용품!", 7, 0, 0, 50),
+                        new Item(ItemList.작은배, "나무로 만든 귀여운 동동배", 0, 0, 5, 50),
+                        new Item(ItemList.튼튼배, "내구성 좋고, 함포가 설치된 무적의 배", 15, 3, 0, 50),
+                    };
+            }
 
-                        var line = Console.ReadLine();
-                        if (line == "0")
+            //상점 출력
+            public void ShopUI(Player player, Inventory inv)
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("<상점> - 아이템 구매\n필요한 아이템을 얻을 수 있는 상점입니다.");
+                    Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
+                    Console.WriteLine("\n[아이템 목록]");
+
+                    for (int i = 0; i < _tem.Count; i++)
+                    {
+                        var item = _tem[i];
+                        string itStatus = item.IsPurchased ? "구매완료" : $"{item.Price} G"; // 구매 여부
+                        Console.WriteLine($"{i + 1}. {item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
+                    }
+
+                    Console.WriteLine("\n1. 구매하기");
+                    //Console.WriteLine("2. 판매하기"); // 인벤 아이템 판매
+                    Console.Write("\n0. 나가기\n\n>>");
+
+                    var input = Console.ReadLine();
+                    if (input == "0")
+                    {
+                        return;
+                    }
+                    else if (input == "1")
+                    {
+                        Console.Write("구매할 아이템 번호를 입력하세요: ");
+                        var itemInput = Console.ReadLine();
+                        int itemIndex;
+                        if (int.TryParse(itemInput, out itemIndex) && itemIndex > 0 && itemIndex <= _tem.Count)
                         {
-                            return;
-                        }
-                        else
-                        {
-                            int index;
-                            if (int.TryParse(line, out index) && index > 0 && index <= _items.Count)
+                            var item = _tem[itemIndex - 1];
+                            if (item.IsPurchased)
                             {
-                                var item = _items[index - 1];
-                                item.IsEquipped = !item.IsEquipped; // 장착 상태 토글
-                                Console.WriteLine($"{item.ItemName}이(가) {(item.IsEquipped ? "장착되었습니다." : "해제되었습니다.")}");
+                                Console.WriteLine("이미 구매한 아이템입니다.");
+                                Console.ReadLine();
+                            }
+                            else if (player.Gold >= item.Price)
+                            {
+                                player.Gold -= item.Price;
+                                item.IsPurchased = true;
+                                inv.Add(item);
+                                Console.WriteLine($"{item.ItemName}을(를) 구매했습니다.");
                                 Console.ReadLine();
                             }
                             else
                             {
-                                continue;
+                                Console.WriteLine("Gold가 부족합니다.");
+                                Console.ReadLine();
                             }
+                        }
+                        else
+                        {
+                            continue;
                         }
                     }
                 }
             }
+        }
 
-            // M-3. 상점
-            class Shop
+
+        // C. 아이템 목록
+        public enum ItemList
+        {
+            산소통 = 1,
+            잠수복,
+            래쉬가드,
+            물안경,
+            나무작살,
+            무쇠작살,
+            낚시세트,
+            작은배,
+            튼튼배
+        }
+
+        public class Item
+        {
+            public ItemList ItemName { get; set; }
+            public string Description { get; set; }
+            public int Attack { get; set; }
+            public int Defense { get; set; }
+            public int Health { get; set; }
+            public int Price { get; set; }
+
+            public bool IsEquipped { get; set; } // 장착 여부
+            public bool IsPurchased { get; set; } // 구매 여부
+
+            public Item(ItemList item, string desc, int atk, int def, int hp, int price)
             {
-                // 상점 생성자
-                private Player _player;
-                private Inventory _inv;
-                private List<Item> _tem;
+                ItemName = item;
+                Description = desc;
+                Attack = atk;
+                Defense = def;
+                Health = hp;
+                Price = price;
 
-                public Shop(Player player, Inventory inv)
+                IsEquipped = false;
+                IsPurchased = false;
+            }
+        }
+
+
+        // D. 바다던전
+        //class Ocean
+        //{
+
+        //}
+
+
+        // E. 휴식하기
+        class Rest
+        {
+            public void RestUI(Player player)
+            {
+                while (true)
                 {
-                    _player = player;
-                    _inv = inv;
-                    _tem = new List<Item>()
+                    Console.Clear();
+                    Console.WriteLine("<휴식하기>");
+                    Console.WriteLine("500G를 내면 체력을 100 회복합니다.");
+                    Console.WriteLine($"현재 체력: {player.Health}/100");
+                    Console.WriteLine($"보유 골드: {player.Gold}G\n");
+                    Console.Write("1. 휴식하기(-500G)\n0. 나가기\n\n>>");
+                    var input = Console.ReadLine();
+                    if (input == "1")
                     {
-                        //이름, 공격력, 방어력, 체력, 가격
-                        new Item(ItemList.무쇠갑옷, "0", 5, 0, 100),
-                        new Item(ItemList.깃털화살, "10", 0, 0, 200),
-                        new Item(ItemList.낡은검, "5", 0, 0, 300),
-                        new Item(ItemList.HP포션, "0", 0, 5, 50)
-                    };
-                }
-
-
-                //상점 출력
-                public void ShopUI(Player player, Inventory inv)
-                {
-                    while (true)
-                    {
-                        Console.Clear();
-                        Console.WriteLine("<상점> - 아이템 구매\n필요한 아이템을 얻을 수 있는 상점입니다.");
-                        Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
-                        Console.WriteLine("\n[아이템 목록]");
-
-                        for (int i = 0; i < _tem.Count; i++)
+                        if (player.Gold >= 500)
                         {
-                            var item = _tem[i];
-                            string itStatus = item.IsPurchased ? "구매완료" : $"{item.Price} G"; // 구매 여부
-                            Console.WriteLine($"{i + 1}. {item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
+                            player.Gold -= 500;
+                            player.Health = 100;
+                            Console.WriteLine("체력이 100 회복되었습니다.");
+                            Console.ReadLine();
                         }
-
-                        Console.WriteLine("\n1. 구매하기");
-                        Console.Write("\n0. 나가기\n\n>>");
-
-                        var input = Console.ReadLine();
-                        if (input == "0")
+                        else
                         {
-                            return;
-                        }
-                        else if (input == "1")
-                        {
-                            Console.Write("구매할 아이템 번호를 입력하세요: ");
-                            var itemInput = Console.ReadLine();
-                            int itemIndex;
-                            if (int.TryParse(itemInput, out itemIndex) && itemIndex > 0 && itemIndex <= _tem.Count)
-                            {
-                                var item = _tem[itemIndex - 1];
-                                if (item.IsPurchased)
-                                {
-                                    Console.WriteLine("이미 구매한 아이템입니다.");
-                                    Console.ReadLine();
-                                }
-                                else if (player.Gold >= item.Price)
-                                {
-                                    player.Gold -= item.Price;
-                                    item.IsPurchased = true;
-                                    inv.Add(item);
-                                    Console.WriteLine($"{item.ItemName}을(를) 구매했습니다.");
-                                    Console.ReadLine();
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Gold가 부족합니다.");
-                                    Console.ReadLine();
-                                }
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                            Console.WriteLine("골드가 부족합니다.");
+                            Console.ReadLine();
                         }
                     }
-                }
-            }
-
-            //아이템 목록
-            public enum ItemList
-            {
-                무쇠갑옷 = 1,
-                깃털화살,
-                낡은검,
-                HP포션
-            }
-
-            public class Item
-            {
-                public ItemList ItemName { get; set; }
-                public string Description { get; set; }
-                public int Attack { get; set; }
-                public int Defense { get; set; }
-                public int Health { get; set; }
-                public int Price { get; set; }
-
-                public bool IsEquipped { get; set; } // 장착 여부
-                public bool IsPurchased { get; set; } // 구매 여부
-
-                public Item(ItemList item, string desc, int atk, int def, int price)
-                {
-                    ItemName = item;
-                    Description = desc;
-                    Attack = atk;
-                    Defense = def;
-                    Price = price;
-
-                    IsEquipped = false;
-                    IsPurchased = false;
+                    else if (input == "0")
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        continue;
+                    }
                 }
             }
         }
