@@ -376,10 +376,10 @@ namespace RtanIsland
                         if (hpPart != "") stats.Add(hpPart);
                         string statsString = string.Join(" | ", stats);
 
-                        Console.WriteLine($"{i + 1}. {item.ItemName} | {item.Description}" + (statsString!="" ? $"{statsString}" : "") + $" | 가격: {item.Price}G");
+                        Console.WriteLine($"{i + 1}. {item.ItemName} | {item.Description}" + (statsString != "" ? $"{statsString}" : "") + $" | 가격: {item.Price}G");
                     }
 
-                    Console.WriteLine("\n1. 구매하기\n2. 판매하기\n0. 나가기\n\n>>");
+                    Console.Write("\n1. 구매하기\n2. 판매하기\n0. 나가기\n\n>>");
 
                     var input = Console.ReadLine();
                     if (input == "0")
@@ -427,12 +427,18 @@ namespace RtanIsland
                     }
                     else if (input == "2")
                     {
-                        //SaleUI(player, inv);
+                        SaleUI(player, inv);
+                    }
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(500);
+                        continue;
                     }
                 }
             }
 
-            // 판매하기
+            // 판매하기 == 상점에서 2
             private void SaleUI(Player player, Inventory inv)
             {
                 while (true)
@@ -442,27 +448,60 @@ namespace RtanIsland
                     Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
                     Console.WriteLine("\n[아이템 목록]");
 
-                    //인벤
-                    var saleList = inv.Item.Where(x => x.IsPurchased).ToList();
-                    if (saleList.Count == 0)
+                    //인벤토리 아이템 목록 -> 상점 판매용 (골드 차이)
+                    var saleItems = inv.Item.Where(x => x.IsPurchased).ToList();
+                    if (saleItems.Count == 0)
                     {
                         Console.WriteLine("판매할 아이템이 없습니다.");
-                        Console.Write("0. 나가기\n\n>>");
-                        if (Console.ReadLine() == "0")
-                        {
-                            return;
-                        }
-                        else
-                        {
-                            Console.WriteLine("잘못된 입력입니다");
-                            Thread.Sleep(500);
-                            continue;
-                        }
-
+                        Console.Write("\n0. 나가기\n\n>>");
+                        if (Console.ReadLine() == "0") return;
+                        continue;
                     }
 
-                    //보유 아이템 목록
-                    //for (int i = 0;)
+                    // 목록 출력
+                    for (int i = 0; i < saleItems.Count; i++)
+                    {
+                        var it = saleItems[i];
+                        int salePrice = (int)(it.Price * 0.85);
+                        // 0이면 해당 스탯은 건너뛰기
+                        var parts = new List<string>();
+                        if (it.Attack > 0) parts.Add($"공격력 +{it.Attack}");
+                        if (it.Defense > 0) parts.Add($"방어력 +{it.Defense}");
+                        if (it.Health > 0) parts.Add($"체력 +{it.Health}");
+                        Console.WriteLine($"{i + 1}. {it.ItemName} | {it.Description}" +
+                                          (parts.Any() ? " | " + string.Join(" | ", parts) : "") +
+                                          $" | 판매가: {salePrice}G");
+                    }
+
+                    Console.Write("\n번호 선택 0. 나가기\n\n>>");
+                    var line = Console.ReadLine();
+                    if (line == "0") return;
+
+                    if (int.TryParse(line, out int idx) && idx >= 1 && idx <= saleItems.Count)
+                    {
+                        var sel = saleItems[idx - 1];
+                        int price = (int)(sel.Price * 0.85);
+
+                        // 장착 해제
+                        if (sel.IsEquipped)
+                        {
+                            sel.IsEquipped = false;
+                            player.Attack -= sel.Attack;
+                            player.Defense -= sel.Defense;
+                        }
+
+                        // 인벤에서 제거 & 골드 지급
+                        inv.Item.Remove(sel);
+                        player.Gold += price;
+
+                        Console.WriteLine($"{sel.ItemName}을(를) 판매하여 {price}G 획득했습니다.");
+                        Thread.Sleep(1000);
+                    }
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(500);
+                    }
                 }
             }
         }
@@ -509,12 +548,52 @@ namespace RtanIsland
         }
 
 
-        // D. 바다던전
-        //class Ocean
-        //{
+        // D. 바다 던전 임시 구현
+        class Ocean
+        {
+            public void OceanUI(Player player)
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("<바다 던전>\n배를 타고 항해로 나가는 중입니다." +
+                        "\n던전 입장료는 [10G] 입니다.\n바다 던전으로 들어가시겠습니까?");
+                    Console.WriteLine($"현재 체력: {player.Health}/100");
+                    Console.WriteLine($"보유 골드: {player.Gold}개");
+                    Console.Write("1. 게임시작\n0. 나가기\n\n>>");
+                    var input = Console.ReadLine();
+                    if (input == "1")
+                    {
+                        if (player.Gold >= 10)
+                        {
+                            player.Gold -= 10;
+                            Console.WriteLine("바다 던전 입장중...(3초)");
+                            Thread.Sleep(3000);
 
-        //}
-
+                            Console.Clear();
+                            Console.Write("바다 던전은 아직 준비중입니다! 그럼 이만, 총총총...\n\n>>[Enter]");
+                            Console.ReadLine();
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("골드가 부족합니다.");
+                            Thread.Sleep(500);
+                        }
+                    }
+                    else if (input == "0")
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다.");
+                        Thread.Sleep(500);
+                        continue;
+                    }
+                }
+            }
+        }
 
         // E. 휴식하기
         class Rest
