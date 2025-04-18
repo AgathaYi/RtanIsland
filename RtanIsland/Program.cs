@@ -94,7 +94,7 @@ namespace RtanIsland
                     else
                     {
                         Console.WriteLine("잘못된 입력입니다");
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
                         continue;
                     }
                 }
@@ -140,7 +140,7 @@ namespace RtanIsland
                         break;
                     default:
                         Console.WriteLine("잘못된 입력입니다");
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
                         break;
                 }
             }
@@ -204,7 +204,7 @@ namespace RtanIsland
                     else
                     {
                         Console.WriteLine("잘못된 입력입니다");
-                        Thread.Sleep(1000);
+                        Thread.Sleep(500);
                         continue;
                     }
                 }
@@ -216,8 +216,10 @@ namespace RtanIsland
         class Inventory
         {
             private List<Item> _items = new List<Item>();
-
             public void Add(Item item) => _items.Add(item);
+
+            public List<Item> Item => _items; //프로퍼티
+
 
             // 인벤토리 출력
             public void invUI(Player player)
@@ -231,7 +233,7 @@ namespace RtanIsland
                     if (_items.Count == 0)
                     {
                         Console.WriteLine("인벤토리에 아이템이 없습니다.");
-                        Console.WriteLine("0. 나가기\n>>");
+                        Console.Write("0. 나가기\n\n>>");
                         if (Console.ReadLine() == "0")
                         {
                             return;
@@ -239,7 +241,7 @@ namespace RtanIsland
                         else
                         {
                             Console.WriteLine("잘못된 입력입니다");
-                            Thread.Sleep(1000);
+                            Thread.Sleep(500);
                             continue;
                         }
                     }
@@ -266,7 +268,7 @@ namespace RtanIsland
                         else
                         {
                             Console.WriteLine("잘못된 입력입니다");
-                            Thread.Sleep(1000);
+                            Thread.Sleep(500);
                             continue;
                         }
                     }
@@ -284,31 +286,38 @@ namespace RtanIsland
                     {
                         var item = _items[i];
                         string equippedTag = item.IsEquipped ? "[E] " : "";
-                        Console.WriteLine($"{i + 1}. {equippedTag}{item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
+                        Console.WriteLine($"{i + 1}. {equippedTag}{item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health}");
                     }
-                    Console.Write("\n0. 나가기\n>>");
+                    Console.Write("\n1. 장착/해제\n0. 나가기\n\n>>");
 
                     var line = Console.ReadLine();
                     if (line == "0")
                     {
                         return;
                     }
-                    else
+                    else if (line == "1")
                     {
-                        int index;
-                        if (int.TryParse(line, out index) && index > 0 && index <= _items.Count)
+                        Console.Write("장착 혹은 해제할 아이템 번호를 입력하세요: ");
+                        var itemInput = Console.ReadLine();
+                        int itemIndex;
+                        if (int.TryParse(itemInput, out itemIndex) && itemIndex > 0 && itemIndex <= _items.Count)
                         {
-                            var item = _items[index - 1];
+                            var item = _items[itemIndex - 1];
                             item.IsEquipped = !item.IsEquipped; // 장착 상태 토글
                             Console.WriteLine($"{item.ItemName}이(가) {(item.IsEquipped ? "장착되었습니다." : "해제되었습니다.")}");
-                            Console.ReadLine();
+                            Thread.Sleep(1000);
                         }
                         else
                         {
                             Console.WriteLine("잘못된 입력입니다");
-                            Thread.Sleep(1000);
-                            continue;
+                            Thread.Sleep(500);
                         }
+                    }
+                    else
+                    {
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(500);
+                        continue;
                     }
                 }
             }
@@ -355,9 +364,7 @@ namespace RtanIsland
                     for (int i = 0; i < _tem.Length; i++)
                     {
                         var item = _tem[i];
-                        string itStatus = item.IsPurchased ? "구매완료" : $"{item.Price} G"; // 구매 여부
-                        //판매여부
-
+                        string itStatus = item.IsPurchased ? "구매완료" : $"{item.Price} G";
                         //0이면 표시 X
                         string atkPart = item.Attack > 0 ? $" | 공격력 +{item.Attack}" : "";
                         string defPart = item.Defense > 0 ? $" | 방어력 +{item.Defense}" : "";
@@ -372,9 +379,7 @@ namespace RtanIsland
                         Console.WriteLine($"{i + 1}. {item.ItemName} | {item.Description}" + (statsString!="" ? $"{statsString}" : "") + $" | 가격: {item.Price}G");
                     }
 
-                    Console.WriteLine("\n1. 구매하기");
-                    //Console.WriteLine("2. 판매하기"); // 인벤 아이템 판매
-                    Console.Write("\n0. 나가기\n\n>>");
+                    Console.WriteLine("\n1. 구매하기\n2. 판매하기\n0. 나가기\n\n>>");
 
                     var input = Console.ReadLine();
                     if (input == "0")
@@ -391,7 +396,7 @@ namespace RtanIsland
                             var item = _tem[itemIndex - 1];
                             if (item.IsPurchased)
                             {
-                                Console.WriteLine("이미 구매한 아이템입니다.");
+                                Console.Write("이미 구매한 아이템입니다.\n\n >>");
                                 Console.ReadLine();
                             }
                             else if (player.Gold >= item.Price)
@@ -399,28 +404,65 @@ namespace RtanIsland
                                 player.Gold -= item.Price;
                                 item.IsPurchased = true;
                                 inv.Add(item);
-                                Console.WriteLine($"{item.ItemName}을(를) 구매했습니다.");
-                                Console.ReadLine();
+                                Console.Write($"{item.ItemName}을(를) 구매했습니다.");
+                                Thread.Sleep(1000);
                             }
                             else if (player.Gold < item.Price)
                             {
                                 Console.WriteLine("Gold가 부족합니다.");
-                                Console.ReadLine();
+                                Thread.Sleep(500);
                             }
                             else
                             {
                                 Console.WriteLine("잘못된 입력입니다");
-                                Thread.Sleep(1000);
-                                continue;
+                                Thread.Sleep(500);
                             }
                         }
                         else
                         {
                             Console.WriteLine("잘못된 입력입니다");
-                            Thread.Sleep(1000);
+                            Thread.Sleep(500);
                             continue;
                         }
                     }
+                    else if (input == "2")
+                    {
+                        //SaleUI(player, inv);
+                    }
+                }
+            }
+
+            // 판매하기
+            private void SaleUI(Player player, Inventory inv)
+            {
+                while (true)
+                {
+                    Console.Clear();
+                    Console.WriteLine("<상점> - 아이템 판매\n보유하신 아이템을 판매가의 85% 가격으로 판매할 수 있습니다.");
+                    Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
+                    Console.WriteLine("\n[아이템 목록]");
+
+                    //인벤
+                    var saleList = inv.Item.Where(x => x.IsPurchased).ToList();
+                    if (saleList.Count == 0)
+                    {
+                        Console.WriteLine("판매할 아이템이 없습니다.");
+                        Console.Write("0. 나가기\n\n>>");
+                        if (Console.ReadLine() == "0")
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            Console.WriteLine("잘못된 입력입니다");
+                            Thread.Sleep(500);
+                            continue;
+                        }
+
+                    }
+
+                    //보유 아이템 목록
+                    //for (int i = 0;)
                 }
             }
         }
@@ -494,13 +536,17 @@ namespace RtanIsland
                         {
                             player.Gold -= 500;
                             player.Health = 100;
-                            Console.WriteLine("체력이 100 회복되었습니다.");
+                            Console.WriteLine("휴식중...(3초)");
+                            Thread.Sleep(3000);
+                            Console.Clear();
+                            Console.Write("체력이 100 회복되었습니다.\n\n>>[Enter]");
                             Console.ReadLine();
+                            return;
                         }
                         else
                         {
                             Console.WriteLine("골드가 부족합니다.");
-                            Console.ReadLine();
+                            Thread.Sleep(500);
                         }
                     }
                     else if (input == "0")
@@ -509,8 +555,8 @@ namespace RtanIsland
                     }
                     else
                     {
-                        Console.WriteLine("잘못된 입력입니다");
-                        Thread.Sleep(1000);
+                        Console.WriteLine("잘못된 입력입니다.");
+                        Thread.Sleep(500);
                         continue;
                     }
                 }
