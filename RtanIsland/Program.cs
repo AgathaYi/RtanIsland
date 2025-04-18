@@ -109,7 +109,7 @@ namespace RtanIsland
                 Console.WriteLine("1. 상태보기");
                 Console.WriteLine("2. 인벤토리");
                 Console.WriteLine("3. 상점");
-                //Console.WriteLine("4. 바다 던전 입장하기");
+                Console.WriteLine("4. 바다 던전 입장하기");
                 Console.WriteLine("5. 휴식하기"); // 500G 내면 체력 100 회복
 
                 Console.Write("\n0. 게임종료\n\n>>");
@@ -129,8 +129,10 @@ namespace RtanIsland
                     case "3":
                         _shop.ShopUI(_player, _inventory);
                         break;
-                    //case "4":
-                    //    Ocean ocean = new Ocean();
+                    case "4":
+                        Ocean ocean = new Ocean();
+                        ocean.OceanUI(_player);
+                        break;
                     case "5":
                         Rest rest = new Rest();
                         rest.RestUI(_player);
@@ -473,7 +475,7 @@ namespace RtanIsland
                                           $" | 판매가: {salePrice}G");
                     }
 
-                    Console.Write("\n번호 선택 0. 나가기\n\n>>");
+                    Console.Write("\n판매할 아이템 번호를 입력하세요: ");
                     var line = Console.ReadLine();
                     if (line == "0") return;
 
