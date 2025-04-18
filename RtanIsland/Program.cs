@@ -93,6 +93,8 @@ namespace RtanIsland
                     }
                     else
                     {
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(1000);
                         continue;
                     }
                 }
@@ -110,7 +112,7 @@ namespace RtanIsland
                 //Console.WriteLine("4. 바다 던전 입장하기");
                 Console.WriteLine("5. 휴식하기"); // 500G 내면 체력 100 회복
 
-                Console.Write("\n0. 나가기\n\n>>");
+                Console.Write("\n0. 게임종료\n\n>>");
 
                 string inputMenu = Console.ReadLine();
                 bool isMenu = int.TryParse(inputMenu, out int _menu);
@@ -137,6 +139,8 @@ namespace RtanIsland
                         Environment.Exit(0);
                         break;
                     default:
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(1000);
                         break;
                 }
             }
@@ -199,6 +203,8 @@ namespace RtanIsland
                     }
                     else
                     {
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(1000);
                         continue;
                     }
                 }
@@ -232,6 +238,8 @@ namespace RtanIsland
                         }
                         else
                         {
+                            Console.WriteLine("잘못된 입력입니다");
+                            Thread.Sleep(1000);
                             continue;
                         }
                     }
@@ -257,6 +265,8 @@ namespace RtanIsland
                         }
                         else
                         {
+                            Console.WriteLine("잘못된 입력입니다");
+                            Thread.Sleep(1000);
                             continue;
                         }
                     }
@@ -295,6 +305,8 @@ namespace RtanIsland
                         }
                         else
                         {
+                            Console.WriteLine("잘못된 입력입니다");
+                            Thread.Sleep(1000);
                             continue;
                         }
                     }
@@ -309,28 +321,25 @@ namespace RtanIsland
             // 상점 생성자
             private Player _player;
             private Inventory _inv;
-            private List<Item> _tem;
-
-            
+            // 배열로 변경
+            private Item[] _tem;
 
             public Shop(Player player, Inventory inv)
             {
                 _player = player;
                 _inv = inv;
-                _tem = new List<Item>()
-                    {
-                        //아이템 정보: 이름, 설명, 공격력, 방어력, 체력**, 가격
-                        //아이템 정보를 배열로 관리하기 .... 수정 Not yet
-                        new Item(ItemList.산소통, "물 속에서 산소가 부족할 때 필요", 0, 0, 5, 50),
-                        new Item(ItemList.물안경, "물 속에서 시야가 흐려지지 않게 도움", 0, 5, 0, 100),
-                        new Item(ItemList.잠수복, "해녀들에게 인기 많던 바로 그 옷", 0, 10, 0, 250),
-                        new Item(ItemList.래쉬가드, "빠른 건조에 탁월한 가벼운 기능성 수영복", 0, 7, 0, 200),
-                        new Item(ItemList.나무작살, "나무라 오래쓰진 못하겠다", 5, 0, 0, 100),
-                        new Item(ItemList.무쇠작살, "아주 그냥 작살나죠", 10, 0, 0, 300),
-                        new Item(ItemList.낚시세트, "바다 사냥의 근본! 올인원 낚시용품!", 7, 0, 0, 50),
-                        new Item(ItemList.작은배, "나무로 만든 귀여운 동동배", 0, 0, 5, 50),
-                        new Item(ItemList.튼튼배, "내구성 좋고, 함포가 설치된 무적의 배", 15, 3, 0, 50),
-                    };
+                _tem = new Item[]
+                {
+                    new Item(ItemList.산소통, "물 속에서 산소가 부족할 때 필요", 0, 0, 5, 50),
+                    new Item(ItemList.물안경, "물 속에서 시야가 흐려지지 않게 도움", 0, 5, 0, 100),
+                    new Item(ItemList.잠수복, "해녀들에게 인기 많던 바로 그 옷", 0, 10, 0, 250),
+                    new Item(ItemList.래쉬가드, "빠른 건조에 탁월한 가벼운 기능성 수영복", 0, 7, 0, 200),
+                    new Item(ItemList.나무작살, "나무라 오래쓰진 못하겠다", 5, 0, 0, 100),
+                    new Item(ItemList.무쇠작살, "아주 그냥 작살나죠", 10, 0, 0, 300),
+                    new Item(ItemList.낚시세트, "바다 사냥의 근본! 올인원 낚시용품!", 7, 0, 0, 500),
+                    new Item(ItemList.작은배, "나무로 만든 귀여운 동동배", 5, 2, 0, 700),
+                    new Item(ItemList.튼튼배, "내구성 좋고, 함포가 설치된 무적의 배", 10, 7, 0, 1500),
+                };
             }
 
             //상점 출력
@@ -343,11 +352,24 @@ namespace RtanIsland
                     Console.WriteLine($"\n[보유골드]\n{player.Gold}G");
                     Console.WriteLine("\n[아이템 목록]");
 
-                    for (int i = 0; i < _tem.Count; i++)
+                    for (int i = 0; i < _tem.Length; i++)
                     {
                         var item = _tem[i];
                         string itStatus = item.IsPurchased ? "구매완료" : $"{item.Price} G"; // 구매 여부
-                        Console.WriteLine($"{i + 1}. {item.ItemName} | 공격력 +{item.Attack} | 방어력 +{item.Defense} | 체력 +{item.Health} | 가격: {item.Price}G");
+                        //판매여부
+
+                        //0이면 표시 X
+                        string atkPart = item.Attack > 0 ? $" | 공격력 +{item.Attack}" : "";
+                        string defPart = item.Defense > 0 ? $" | 방어력 +{item.Defense}" : "";
+                        string hpPart = item.Health > 0 ? $" | 체력 +{item.Health}" : "";
+
+                        var stats = new List<string>();
+                        if (atkPart != "") stats.Add(atkPart);
+                        if (defPart != "") stats.Add(defPart);
+                        if (hpPart != "") stats.Add(hpPart);
+                        string statsString = string.Join(" | ", stats);
+
+                        Console.WriteLine($"{i + 1}. {item.ItemName} | {item.Description}" + (statsString!="" ? $"{statsString}" : "") + $" | 가격: {item.Price}G");
                     }
 
                     Console.WriteLine("\n1. 구매하기");
@@ -364,7 +386,7 @@ namespace RtanIsland
                         Console.Write("구매할 아이템 번호를 입력하세요: ");
                         var itemInput = Console.ReadLine();
                         int itemIndex;
-                        if (int.TryParse(itemInput, out itemIndex) && itemIndex > 0 && itemIndex <= _tem.Count)
+                        if (int.TryParse(itemInput, out itemIndex) && itemIndex > 0 && itemIndex <= _tem.Length)
                         {
                             var item = _tem[itemIndex - 1];
                             if (item.IsPurchased)
@@ -380,14 +402,22 @@ namespace RtanIsland
                                 Console.WriteLine($"{item.ItemName}을(를) 구매했습니다.");
                                 Console.ReadLine();
                             }
-                            else
+                            else if (player.Gold < item.Price)
                             {
                                 Console.WriteLine("Gold가 부족합니다.");
                                 Console.ReadLine();
                             }
+                            else
+                            {
+                                Console.WriteLine("잘못된 입력입니다");
+                                Thread.Sleep(1000);
+                                continue;
+                            }
                         }
                         else
                         {
+                            Console.WriteLine("잘못된 입력입니다");
+                            Thread.Sleep(1000);
                             continue;
                         }
                     }
@@ -396,7 +426,7 @@ namespace RtanIsland
         }
 
 
-        // C. 아이템 목록
+        // C. 아이템 자료 저장
         public enum ItemList
         {
             산소통 = 1,
@@ -479,6 +509,8 @@ namespace RtanIsland
                     }
                     else
                     {
+                        Console.WriteLine("잘못된 입력입니다");
+                        Thread.Sleep(1000);
                         continue;
                     }
                 }
