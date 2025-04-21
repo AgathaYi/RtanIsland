@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RtanIsland", "RtanIsland.csproj", "{7E090D12-BACB-432B-A26C-42F791098DDE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpartaDungeon", "..\SpartaDungeon\SpartaDungeon.csproj", "{16FE44C0-D25D-499A-BFBA-71EBFCD1D53A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7E090D12-BACB-432B-A26C-42F791098DDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7E090D12-BACB-432B-A26C-42F791098DDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7E090D12-BACB-432B-A26C-42F791098DDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16FE44C0-D25D-499A-BFBA-71EBFCD1D53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16FE44C0-D25D-499A-BFBA-71EBFCD1D53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16FE44C0-D25D-499A-BFBA-71EBFCD1D53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16FE44C0-D25D-499A-BFBA-71EBFCD1D53A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
